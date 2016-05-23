@@ -20,7 +20,6 @@ function URLShortener() {
   
   this.getURL = function(req, res) {
     var url = '/';
-    console.log(req.params.hash)
     Urls.findOne({ 'hash': req.params.hash }, { '_id': false }, function(err, result) {
       if (err) { throw err; }
       if (result) url = result.original;
@@ -31,7 +30,6 @@ function URLShortener() {
   this.addURL = function(req, res, prefix) {
     var uri = (prefix || '') + req.params.url;
     var hash = ys.hash(uri);
-    console.log(uri, hash);
     var url = {
       "original": uri,
       "hash": hash
