@@ -7,9 +7,8 @@ ys.set_mask_len(70);
 function URLShortener() {
   
   this.isURL = function(value) {
-    var expression = '';
-    var regex = new RegExp(expression);
-    return value.match(regex);
+    var expression = /(([\w\.\-\+]+:)\/{2}(([\w\d\.]+):([\w\d\.]+))?@?(([a-zA-Z0-9\.\-_]+)(?::(\d{1,5}))?))?(\/(?:[a-zA-Z0-9\.\-\/\+\%]+)?)(?:\?([a-zA-Z0-9=%\-_\.\*&;]+))?(?:#([a-zA-Z0-9\-=,&%;\/\\"'\?]+)?)?/g;
+    return expression.test(value);
   };
   
   this.countURL = function() {
@@ -29,15 +28,19 @@ function URLShortener() {
   
   this.addURL = function(req, res, prefix) {
     var uri = (prefix || '') + req.params.url;
+    if (!this.isURL(uri)) {
+      res.json({ "error": true });
+      return;
+    };
     var hash = ys.hash(uri);
     var url = {
       "original": uri,
-      "hash": hash
+      "hash": (process.env.API_URL || '') + hash
     }
     var options = { upsert: true, new: true, setDefaultsOnInsert: true };
 		Urls.findOneAndUpdate({ 'hash': hash }, url, options, function(err, result) {
 			if (err) { throw err; }
-      res.json(result);
+      res.json({ "original_url": url.original, "short_url": url.hash });
     });
   };
   
