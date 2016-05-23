@@ -24,13 +24,11 @@ module.exports = function (app) {
   app.route('/new/http://:url')
       .get(function (req, res) {
         urlShortener.addURL(req, res, 'http://');
-        console.log('new: http:');
       });
       
   app.route('/new/https://:url')
       .get(function (req, res) {
         urlShortener.addURL(req, res, 'https://');
-        console.log('new: https:');
       });
 
 };

@@ -35,12 +35,12 @@ function URLShortener() {
     var hash = ys.hash(uri);
     var url = {
       "original": uri,
-      "hash": (process.env.API_URL || '') + hash
+      "hash": hash
     }
     var options = { upsert: true, new: true, setDefaultsOnInsert: true };
 		Urls.findOneAndUpdate({ 'hash': hash }, url, options, function(err, result) {
 			if (err) { throw err; }
-      res.json({ "original_url": url.original, "short_url": url.hash });
+      res.json({ "original_url": url.original, "short_url": (process.env.API_URL || '') + url.hash });
     });
   };
   
